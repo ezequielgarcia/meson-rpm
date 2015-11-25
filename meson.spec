@@ -1,15 +1,13 @@
 %global __python %{__python3}
 
 Name:           meson
-Version:        0.26.0
-Release:        2%{?dist}
+Version:        0.27.0
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
-# https://github.com/mesonbuild/meson/pull/301
-Patch0:         0001-rpm-macros-export-FLAGS.patch
 BuildArch:      noarch
 
 BuildRequires:  python3-devel ninja-build
@@ -48,7 +46,7 @@ Requires:       python3-qt5
 GUI for high productivity build system.
 
 %prep
-%autosetup -S git
+%autosetup
 
 %build
 # Nothing to build
@@ -85,6 +83,9 @@ MESON_PRINT_TEST_OUTPUT=1 ./run_tests.py
 %{_mandir}/man1/%{name}gui.1.*
 
 %changelog
+* Wed Nov 25 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.27.0-1
+- 0.27.0
+
 * Fri Oct 30 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.26.0-2
 - Fix rpm macros for using optflags
 
