@@ -1,7 +1,7 @@
 %global __python %{__python3}
 
 Name:           meson
-Version:        0.27.0
+Version:        0.28.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -83,6 +83,9 @@ MESON_PRINT_TEST_OUTPUT=1 ./run_tests.py
 %{_mandir}/man1/%{name}gui.1.*
 
 %changelog
+* Mon Dec 28 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.28.0-1
+- 0.28.0
+
 * Wed Nov 25 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.27.0-1
 - 0.27.0
 
