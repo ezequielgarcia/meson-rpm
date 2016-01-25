@@ -1,7 +1,7 @@
-%global __python %{__python3}
+%global libname mesonbuild
 
 Name:           meson
-Version:        0.28.0
+Version:        0.29.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -10,7 +10,9 @@ URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
 BuildArch:      noarch
 
-BuildRequires:  python3-devel ninja-build
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+BuildRequires:  ninja-build
 # Test deps
 BuildRequires:  gcc gcc-c++ gcc-gfortran gcc-objc gcc-objc++ java-devel mono-core mono-devel
 BuildRequires:  boost-devel
@@ -28,7 +30,6 @@ BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(gobject-introspection-1.0) python3-gobject-base gtk-doc
 BuildRequires:  pkgconfig(zlib)
 Requires:       ninja-build
-Requires:       python3
 
 %description
 Meson is a build system designed to optimize programmer
@@ -49,10 +50,11 @@ GUI for high productivity build system.
 %autosetup
 
 %build
-# Nothing to build
+%py3_build
 
 %install
-./install_meson.py --prefix=%{_prefix} --destdir=%{buildroot}
+%py3_install
+install -Dpm 0644 data/macros.%{name} %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
 
 %check
 MESON_PRINT_TEST_OUTPUT=1 ./run_tests.py
@@ -63,11 +65,11 @@ MESON_PRINT_TEST_OUTPUT=1 ./run_tests.py
 %{_bindir}/%{name}conf
 %{_bindir}/%{name}introspect
 %{_bindir}/wraptool
-%dir %{_datadir}/%{name}/
-%exclude %{_datadir}/%{name}/*.ui
-%exclude %{_datadir}/%{name}/mesongui.py
-%exclude %{_datadir}/%{name}/__pycache__/mesongui.*
-%{_datadir}/%{name}/*
+%exclude %{python3_sitelib}/%{libname}/*.ui
+%exclude %{python3_sitelib}/%{libname}/__pycache__/mgui.*
+%exclude %{python3_sitelib}/%{libname}/mgui.py
+%{python3_sitelib}/%{libname}/
+%{python3_sitelib}/%{name}-%{version}-py%{python3_version}.egg-info/
 %{_mandir}/man1/%{name}.1.*
 %{_mandir}/man1/%{name}conf.1.*
 %{_mandir}/man1/%{name}introspect.1.*
@@ -75,14 +77,19 @@ MESON_PRINT_TEST_OUTPUT=1 ./run_tests.py
 %{_rpmconfigdir}/macros.d/macros.%{name}
 
 %files gui
-%license COPYING
 %{_bindir}/%{name}gui
-%{_datadir}/%{name}/*.ui
-%{_datadir}/%{name}/mesongui.py
-%{_datadir}/%{name}/__pycache__/mesongui.*
+%{python3_sitelib}/%{libname}/*.ui
+%{python3_sitelib}/%{libname}/__pycache__/mgui.*
+%{python3_sitelib}/%{libname}/mgui.py
 %{_mandir}/man1/%{name}gui.1.*
 
 %changelog
+* Sun Jan 24 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.29.0-1
+- Update to 0.29.0
+
+* Fri Jan 15 2016 Jonathan Wakely <jwakely@redhat.com> - 0.28.0-2
+- Rebuilt for Boost 1.60
+
 * Mon Dec 28 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 0.28.0-1
 - 0.28.0
 
