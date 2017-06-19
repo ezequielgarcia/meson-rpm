@@ -59,6 +59,11 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  python%{python3_pkgversion}-Cython
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  llvm-devel
+%if 0%{?fedora} && 0%{?fedora} < 26
+# c++  -o sum 'sum@exe/sum.c.o' -Wl,--no-undefined -Wl,--as-needed -pthread -L/usr/lib64 -Wl,--start-group -lLLVM-3.9 -lrt -ldl -ltinfo -lpthread -lz -lm -Wl,--end-group
+# /usr/bin/ld: cannot find -ltinfo
+BuildRequires:  ncurses-devel
+%endif
 Requires:       ninja-build
 
 %description
