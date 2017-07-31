@@ -1,13 +1,14 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.41.1
+Version:        0.41.2
 Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
 
@@ -104,6 +105,15 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Wed Jul 19 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.41.2-1
+- Update to 0.41.2
+
+* Tue Jul 18 2017 Kalev Lember <klember@redhat.com> - 0.41.1-3
+- Backport various gtk-doc fixes from upstream
+
+* Thu Jul 13 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.41.1-2
+- Strip trailing slash from pkg-config files
+
 * Mon Jun 19 2017 Igor Gnatenko <ignatenko@redhat.com> - 0.41.1-1
 - Update to 0.41.1
 
