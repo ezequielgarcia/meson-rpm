@@ -1,7 +1,7 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.41.2
+Version:        0.42.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -17,6 +17,7 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 BuildRequires:  ninja-build
 # Various languages
 BuildRequires:  gcc
+BuildRequires:  libasan
 BuildRequires:  gcc-c++
 BuildRequires:  gcc-gfortran
 BuildRequires:  gcc-objc
@@ -59,6 +60,8 @@ BuildRequires:  itstool
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  python%{python3_pkgversion}-Cython
 BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  %{_bindir}/pcap-config
+BuildRequires:  pkgconfig(vulkan)
 BuildRequires:  llvm-devel
 %if 0%{?fedora} && 0%{?fedora} < 26
 # c++  -o sum 'sum@exe/sum.c.o' -Wl,--no-undefined -Wl,--as-needed -pthread -L/usr/lib64 -Wl,--start-group -lLLVM-3.9 -lrt -ldl -ltinfo -lpthread -lz -lm -Wl,--end-group
@@ -76,6 +79,8 @@ unit tests, coverage reports, Valgrind, CCache and the like.
 %prep
 %autosetup -p1
 find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {} ';'
+# Remove MPI tests for now because it is complicated to run
+rm -rf "test cases/frameworks/17 mpi"
 
 %build
 %py3_build
@@ -105,6 +110,12 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Fri Aug 18 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.0-1
+- Update to 0.42.0
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.41.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Jul 19 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.41.2-1
 - Update to 0.41.2
 
