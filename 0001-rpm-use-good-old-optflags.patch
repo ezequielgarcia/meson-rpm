@@ -1,0 +1,34 @@
+From 5cbbbc161851a77f7dd92426a84080b0e849fffb Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Mon, 4 Sep 2017 13:03:07 +0200
+Subject: [PATCH] rpm: use good old %optflags
+
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+---
+ data/macros.meson | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/data/macros.meson b/data/macros.meson
+index e55f7a29..33bbb0bf 100644
+--- a/data/macros.meson
++++ b/data/macros.meson
+@@ -2,11 +2,11 @@
+ %__meson_wrap_mode nodownload
+ 
+ %meson \
+-    export CFLAGS="${CFLAGS:-%__global_cflags}"       \
+-    export CXXFLAGS="${CXXFLAGS:-%__global_cxxflags}" \
+-    export FFLAGS="${FFLAGS:-%__global_fflags}"       \
+-    export FCFLAGS="${FCFLAGS:-%__global_fcflags}"    \
+-    export LDFLAGS="${LDFLAGS:-%__global_ldflags}"    \
++    export CFLAGS="${CFLAGS:-%optflags}"               \
++    export CXXFLAGS="${CXXFLAGS:-%optflags}"           \
++    export FFLAGS="${FFLAGS:-%optflags -I%_fmoddir}"   \
++    export FCFLAGS="${FCFLAGS:-%optflags -I%_fmoddir}" \
++    export LDFLAGS="${LDFLAGS:-%__global_ldflags}"     \
+     %{__meson}                              \\\
+         --buildtype=plain                   \\\
+         --prefix=%{_prefix}                 \\\
+-- 
+2.14.1
+

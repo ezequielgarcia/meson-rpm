@@ -2,12 +2,14 @@
 
 Name:           meson
 Version:        0.42.0
-Release:        1%{?dist}
+Release:        1%{?dist}.1
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+# F26 and above doesn't need it
+Patch0:         0001-rpm-use-good-old-optflags.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
@@ -110,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Mon Sep 04 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.0-1.1
+- Fix %%meson macro on F25
+
 * Fri Aug 18 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.0-1
 - Update to 0.42.0
 
