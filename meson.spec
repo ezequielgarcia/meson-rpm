@@ -1,8 +1,8 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.42.0
-Release:        1%{?dist}.1
+Version:        0.42.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -112,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Tue Sep 12 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.1-1
+- Update to 0.42.1
+
 * Mon Sep 04 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.0-1.1
 - Fix %%meson macro on F25
 
