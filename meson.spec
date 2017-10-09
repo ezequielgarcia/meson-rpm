@@ -75,6 +75,7 @@ BuildRequires:  llvm-devel
 BuildRequires:  ncurses-devel
 %endif
 BuildRequires:  cups-devel
+%endif
 Requires:       ninja-build
 
 %description
