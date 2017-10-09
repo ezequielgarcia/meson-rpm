@@ -1,7 +1,9 @@
 %global libname mesonbuild
 
+%bcond_with check
+
 Name:           meson
-Version:        0.42.1
+Version:        0.43.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -17,6 +19,7 @@ Obsoletes:      %{name}-gui < 0.31.0-3
 BuildRequires:  python%{python3_pkgversion}-devel
 BuildRequires:  python%{python3_pkgversion}-setuptools
 BuildRequires:  ninja-build
+%if %{with check}
 # Various languages
 BuildRequires:  gcc
 BuildRequires:  libasan
@@ -53,6 +56,7 @@ BuildRequires:  %{_bindir}/gnustep-config
 BuildRequires:  git-core
 BuildRequires:  pkgconfig(protobuf)
 BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(glib-sharp-2.0)
 BuildRequires:  pkgconfig(gobject-introspection-1.0)
 %if ! 0%{?rhel} || 0%{?rhel} > 7
 BuildRequires:  python3-gobject-base
@@ -70,6 +74,7 @@ BuildRequires:  llvm-devel
 # /usr/bin/ld: cannot find -ltinfo
 BuildRequires:  ncurses-devel
 %endif
+BuildRequires:  cups-devel
 Requires:       ninja-build
 
 %description
@@ -91,9 +96,11 @@ rm -rf "test cases/frameworks/17 mpi"
 %py3_install
 install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 
+%if %{with check}
 %check
 export MESON_PRINT_TEST_OUTPUT=1
 %{__python3} ./run_tests.py %{?rhel:|| :}
+%endif
 
 %files
 %license COPYING
@@ -112,6 +119,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Mon Oct 09 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.43.0-1
+- Update to 0.43.0
+
 * Tue Sep 12 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.42.1-1
 - Update to 0.42.1
 
