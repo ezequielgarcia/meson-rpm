@@ -4,7 +4,7 @@
 
 Name:           meson
 Version:        0.45.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -90,6 +90,8 @@ rm -rf "test cases/frameworks/17 mpi"
 %py3_install
 install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 
+sed -i s@%%{_bindir}/meson@%{_bindir}/meson@ %{buildroot}%{rpmmacrodir}/macros.%{name}
+
 %if %{with check}
 %check
 export MESON_PRINT_TEST_OUTPUT=1
@@ -113,6 +115,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Tue Mar  6 2018 Owen Taylor <otaylor@redhat.com> - 0.45.0-2
+- Fix binddir usage in macros.meson
+
 * Sun Mar 04 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.45.0-1
 - Update to 0.45.0
 
