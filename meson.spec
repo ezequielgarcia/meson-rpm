@@ -1,21 +1,20 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.44.1
+Version:        0.46.1
 Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
-# F26 and above doesn't need it
 Patch0:         0001-rpm-use-good-old-optflags.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
 
-BuildRequires:  python%{python3_pkgversion}-devel
-BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_otherpkgversion}-devel
+BuildRequires:  python%{python3_otherpkgversion}-setuptools
 BuildRequires:  ninja-build
 Requires:       ninja-build
 
@@ -57,6 +56,9 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{rpmmacrodir}/macros.%{name}
 
 %changelog
+* Thu May 17 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.46.1-1
+- Update to 0.46.1
+
 * Fri Feb 23 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.44.1-1
 - Update to 0.44.1
 
