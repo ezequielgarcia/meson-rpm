@@ -13,8 +13,8 @@ Patch0:         0001-rpm-use-good-old-optflags.patch
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
 
-BuildRequires:  python%{python3_otherpkgversion}-devel
-BuildRequires:  python%{python3_otherpkgversion}-setuptools
+BuildRequires:  python%{python3_other_pkgversion}-devel
+BuildRequires:  python%{python3_other_pkgversion}-setuptools
 BuildRequires:  ninja-build
 Requires:       ninja-build
 
