@@ -29,15 +29,15 @@ unit tests, coverage reports, Valgrind, CCache and the like.
 find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {} ';'
 
 %build
-%py3_build
+%py3_other_build
 
 %install
-%py3_install
+%py3_other_install
 install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 
 #check
 #export MESON_PRINT_TEST_OUTPUT=1
-#{__python3} ./run_tests.py %{?rhel:|| :}
+#{__python3_other} ./run_tests.py %{?rhel:|| :}
 
 %files
 %license COPYING
