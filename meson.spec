@@ -47,8 +47,8 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{_bindir}/%{name}introspect
 %{_bindir}/%{name}test
 %{_bindir}/wraptool
-%{python3_sitelib}/%{libname}/
-%{python3_sitelib}/%{name}-*.egg-info/
+%{python3_other_sitelib}/%{libname}/
+%{python3_other_sitelib}/%{name}-*.egg-info/
 %{_mandir}/man1/%{name}.1*
 %{_mandir}/man1/%{name}conf.1*
 %{_mandir}/man1/%{name}introspect.1*
