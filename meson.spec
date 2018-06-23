@@ -15,6 +15,7 @@ Obsoletes:      %{name}-gui < 0.31.0-3
 
 BuildRequires:  python%{python3_other_pkgversion}-devel
 BuildRequires:  python%{python3_other_pkgversion}-setuptools
+BuildRequires:  python3-rpm-macros
 BuildRequires:  ninja-build
 Requires:       ninja-build
 
