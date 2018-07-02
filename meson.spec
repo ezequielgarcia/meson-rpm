@@ -1,7 +1,7 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.46.1
+Version:        0.47.1
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -55,8 +55,14 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{_mandir}/man1/%{name}test.1*
 %{_mandir}/man1/wraptool.1*
 %{rpmmacrodir}/macros.%{name}
+%dir %{_datadir}/polkit-1
+%dir %{_datadir}/polkit-1/actions
+%{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Tue Jul 10 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.47.1-1
+- Update to 0.47.1
+
 * Thu May 17 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.46.1-1
 - Update to 0.46.1
 
