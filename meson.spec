@@ -8,11 +8,8 @@ Summary:        High productivity build system
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
-Patch0:         0001-rpm-use-good-old-optflags.patch
-
-Patch0001:      0001-rpm-use-set_build_flags-skip-ci.patch
-Patch0002:      0002-rpm-use-shrink-skip-ci.patch
-Patch0003:      0003-rpm-pass-auto-features-enabled-skip-ci.patch
+Patch0001:      0001-rpm-use-good-old-optflags.patch
+Patch0002:      0002-rpm-pass-auto-features-enabled-skip-ci.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3

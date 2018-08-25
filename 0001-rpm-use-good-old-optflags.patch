@@ -1,7 +1,7 @@
-From 5cbbbc161851a77f7dd92426a84080b0e849fffb Mon Sep 17 00:00:00 2001
+From a532714cf50f13cb29b0eb86c588f3a7fc6343b0 Mon Sep 17 00:00:00 2001
 From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
 Date: Mon, 4 Sep 2017 13:03:07 +0200
-Subject: [PATCH] rpm: use good old %optflags
+Subject: [PATCH 1/2] rpm: use good old %optflags
 
 Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/data/macros.meson b/data/macros.meson
-index e55f7a29..33bbb0bf 100644
+index 732b68d2..9ef19a57 100644
 --- a/data/macros.meson
 +++ b/data/macros.meson
 @@ -2,11 +2,11 @@
@@ -30,5 +30,5 @@ index e55f7a29..33bbb0bf 100644
          --buildtype=plain                   \\\
          --prefix=%{_prefix}                 \\\
 -- 
-2.14.1
+2.18.0
 
