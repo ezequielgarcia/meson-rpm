@@ -1,7 +1,7 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.47.1
+Version:        0.47.2
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -9,6 +9,10 @@ License:        ASL 2.0
 URL:            http://mesonbuild.com/
 Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
 Patch0:         0001-rpm-use-good-old-optflags.patch
+
+Patch0001:      0001-rpm-use-set_build_flags-skip-ci.patch
+Patch0002:      0002-rpm-use-shrink-skip-ci.patch
+Patch0003:      0003-rpm-pass-auto-features-enabled-skip-ci.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
@@ -28,6 +32,8 @@ unit tests, coverage reports, Valgrind, CCache and the like.
 %prep
 %autosetup -p1
 find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {} ';'
+# Macro should not change when we are redefining bindir
+sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
 %build
 %py3_other_build
@@ -35,10 +41,6 @@ find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {}
 %install
 %py3_other_install
 install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
-
-#check
-#export MESON_PRINT_TEST_OUTPUT=1
-#{__python3_other} ./run_tests.py %{?rhel:|| :}
 
 %files
 %license COPYING
@@ -60,6 +62,9 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Sat Aug 25 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.47.2-1
+- Update to 0.47.2
+
 * Tue Jul 10 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.47.1-1
 - Update to 0.47.1
 

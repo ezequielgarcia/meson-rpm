@@ -1,0 +1,67 @@
+From 07ed6359314c2e891c856bd0dd60e228d1e99238 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Mon, 23 Jul 2018 19:29:19 +0200
+Subject: [PATCH 2/5] =?UTF-8?q?rpm:=20use=20%{shrink=E2=80=A6}=20[skip=20c?=
+ =?UTF-8?q?i]?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Make logs look better!
+
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+(cherry picked from commit 88d1b8f9e7b6ff6adc4103e489f09a96e5a99743)
+---
+ data/macros.meson | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/data/macros.meson b/data/macros.meson
+index 7be47895..a6a90525 100644
+--- a/data/macros.meson
++++ b/data/macros.meson
+@@ -3,24 +3,24 @@
+ 
+ %meson \
+     %set_build_flags \
+-    %{__meson}                              \\\
+-        --buildtype=plain                   \\\
+-        --prefix=%{_prefix}                 \\\
+-        --libdir=%{_libdir}                 \\\
+-        --libexecdir=%{_libexecdir}         \\\
+-        --bindir=%{_bindir}                 \\\
+-        --sbindir=%{_sbindir}               \\\
+-        --includedir=%{_includedir}         \\\
+-        --datadir=%{_datadir}               \\\
+-        --mandir=%{_mandir}                 \\\
+-        --infodir=%{_infodir}               \\\
+-        --localedir=%{_datadir}/locale      \\\
+-        --sysconfdir=%{_sysconfdir}         \\\
+-        --localstatedir=%{_localstatedir}   \\\
+-        --sharedstatedir=%{_sharedstatedir} \\\
+-        --wrap-mode=%{__meson_wrap_mode}    \\\
+-        %{_vpath_srcdir} %{_vpath_builddir} \\\
+-        %{nil}
++    %{shrink:%{__meson} \
++        --buildtype=plain \
++        --prefix=%{_prefix} \
++        --libdir=%{_libdir} \
++        --libexecdir=%{_libexecdir} \
++        --bindir=%{_bindir} \
++        --sbindir=%{_sbindir} \
++        --includedir=%{_includedir} \
++        --datadir=%{_datadir} \
++        --mandir=%{_mandir} \
++        --infodir=%{_infodir} \
++        --localedir=%{_datadir}/locale \
++        --sysconfdir=%{_sysconfdir} \
++        --localstatedir=%{_localstatedir} \
++        --sharedstatedir=%{_sharedstatedir} \
++        --wrap-mode=%{__meson_wrap_mode} \
++        %{_vpath_srcdir} %{_vpath_builddir} \
++	%{nil}}
+ 
+ %meson_build \
+     %ninja_build -C %{_vpath_builddir}
+-- 
+2.18.0
+

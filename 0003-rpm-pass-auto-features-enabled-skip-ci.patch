@@ -1,0 +1,35 @@
+From 5791529fdfce3e962a2d857c807e082e051c4e1d Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Mon, 23 Jul 2018 19:24:33 +0200
+Subject: [PATCH 3/5] rpm: pass --auto-features=enabled [skip ci]
+
+We really want to be explicit.
+
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+(cherry picked from commit 1515fca2d9d4dcc8c9c98689421e69517444c05e)
+---
+ data/macros.meson | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/data/macros.meson b/data/macros.meson
+index a6a90525..4a8a3ca4 100644
+--- a/data/macros.meson
++++ b/data/macros.meson
+@@ -1,5 +1,6 @@
+ %__meson %{_bindir}/meson
+ %__meson_wrap_mode nodownload
++%__meson_auto_features enabled
+ 
+ %meson \
+     %set_build_flags \
+@@ -19,6 +20,7 @@
+         --localstatedir=%{_localstatedir} \
+         --sharedstatedir=%{_sharedstatedir} \
+         --wrap-mode=%{__meson_wrap_mode} \
++        --auto-features=%{__meson_auto_features} \
+         %{_vpath_srcdir} %{_vpath_builddir} \
+ 	%{nil}}
+ 
+-- 
+2.18.0
+
