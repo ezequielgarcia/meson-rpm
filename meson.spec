@@ -1,7 +1,7 @@
 %global libname mesonbuild
 
 Name:           meson
-Version:        0.48.2
+Version:        0.49.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -46,5 +46,8 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{_rpmmacrodir}/macros.%{name}
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Sun Dec 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.49.0-1
+- Update to 0.49.0
+
 * Sat Dec 08 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.48.2-1
 - Initial package
