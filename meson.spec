@@ -3,7 +3,7 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.48.2
+Version:        0.49.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -101,6 +101,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Sun Dec 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.49.0-1
+- Update to 0.49.0
+
 * Sat Nov 17 2018 Kalev Lember <klember@redhat.com> - 0.48.2-1
 - Update to 0.48.2
 
