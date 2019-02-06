@@ -14,8 +14,14 @@ Patch0002:      0002-rpm-pass-auto-features-enabled-skip-ci.patch
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
 
-BuildRequires:  python%{python3_other_pkgversion}-devel
-BuildRequires:  python%{python3_other_pkgversion}-setuptools
+# this needs Python 3.5+
+%if %{python3_pkgversion} < %{python3_other_pkgversion}
+%global __python3 %__python3_other
+%global python3_pkgversion %python3_other_pkgversion
+%endif
+
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
 BuildRequires:  python3-rpm-macros
 BuildRequires:  ninja-build
 Requires:       ninja-build
@@ -33,10 +39,10 @@ find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {}
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
 %build
-%py3_other_build
+%py3_build
 
 %install
-%py3_other_install
+%py3_install
 install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 
 %files
@@ -46,8 +52,8 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{_bindir}/%{name}introspect
 %{_bindir}/%{name}test
 %{_bindir}/wraptool
-%{python3_other_sitelib}/%{libname}/
-%{python3_other_sitelib}/%{name}-*.egg-info/
+%{python3_sitelib}/%{libname}/
+%{python3_sitelib}/%{name}-*.egg-info/
 %{_mandir}/man1/%{name}.1*
 %{_mandir}/man1/%{name}conf.1*
 %{_mandir}/man1/%{name}introspect.1*
