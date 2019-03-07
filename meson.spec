@@ -2,7 +2,7 @@
 
 Name:           meson
 Version:        0.47.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -59,6 +59,9 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Thu Mar 07 2019 Troy Dawson <tdawson@redhat.com> - 0.47.2-2
+- Rebuilt to change main python from 3.4 to 3.6
+
 * Sat Aug 25 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.47.2-1
 - Update to 0.47.2
 
