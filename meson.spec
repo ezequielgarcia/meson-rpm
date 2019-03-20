@@ -2,6 +2,9 @@
 
 %bcond_with check
 
+# pygobject3 BRs meson, so when bootstrapping Python, we cannot have this
+%bcond_without gobject
+
 Name:           meson
 Version:        0.50.0
 Release:        1%{?dist}
@@ -39,7 +42,9 @@ BuildRequires:  gtest-devel
 BuildRequires:  gmock-devel
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  vala
+%if %{with gobject}
 BuildRequires:  python3-gobject-base
+%endif
 BuildRequires:  wxGTK3-devel
 BuildRequires:  flex
 BuildRequires:  bison
