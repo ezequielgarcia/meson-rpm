@@ -4,12 +4,14 @@
 
 Name:           meson
 Version:        0.50.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
-Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+Source:         https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+# https://github.com/mesonbuild/meson/pull/5142
+Patch0001:      0001-rpm-Always-set-b_ndebug-to-true.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
@@ -101,6 +103,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Mon Mar 25 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.0-2
+- Set -Db_ndebug=true
+
 * Sun Mar 10 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.0-1
 - Update to 0.50.0
 
