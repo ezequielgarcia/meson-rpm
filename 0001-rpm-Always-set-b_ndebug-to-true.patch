@@ -1,4 +1,4 @@
-From 1afae5c4e8e5fcb3028bb36cd4e1fa9c41600dd7 Mon Sep 17 00:00:00 2001
+From 83b32f0efe939fe8cb41c5f94c3c85e2002691d0 Mon Sep 17 00:00:00 2001
 From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
 Date: Mon, 25 Mar 2019 17:00:32 +0100
 Subject: [PATCH] rpm: Always set b_ndebug to true
@@ -11,14 +11,14 @@ Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/data/macros.meson b/data/macros.meson
-index 05d21e58..431a90c3 100644
+index 05d21e58..73a31ab7 100644
 --- a/data/macros.meson
 +++ b/data/macros.meson
 @@ -21,6 +21,7 @@
          --sharedstatedir=%{_sharedstatedir} \
          --wrap-mode=%{__meson_wrap_mode} \
          --auto-features=%{__meson_auto_features} \
-+	-Db_ndebug=true \
++        -Db_ndebug=true \
          %{_vpath_srcdir} %{_vpath_builddir} \
  	%{nil}}
  
