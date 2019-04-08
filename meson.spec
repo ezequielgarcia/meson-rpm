@@ -2,12 +2,14 @@
 
 Name:           meson
 Version:        0.50.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            http://mesonbuild.com/
-Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+Source:         https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
+# https://github.com/mesonbuild/meson/commit/d88bf0eb80e2531a8017de4efd4eb02f1e3081ec
+Patch0001:      0001-compilers-n_debug-if-release-and-buildtype-plain-sho.patch
 
 BuildArch:      noarch
 
@@ -32,7 +34,7 @@ sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
 %install
 %py3_install
-install -Dpm0644 data/macros.%{name} %{buildroot}%{_rpmmacrodir}/macros.%{name}
+install -Dpm0644 -t %{buildroot}%{_rpmmacrodir} data/macros.%{name}
 
 %files
 %license COPYING
@@ -46,6 +48,9 @@ install -Dpm0644 data/macros.%{name} %{buildroot}%{_rpmmacrodir}/macros.%{name}
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Mon Apr 08 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.0-2
+- Fix -Db_ndebug=if-release with -Dbuildtype=plain
+
 * Sun Mar 10 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.0-1
 - Update to 0.50.0
 
