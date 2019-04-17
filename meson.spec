@@ -3,8 +3,8 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.50.0
-Release:        4%{?dist}
+Version:        0.50.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -12,22 +12,13 @@ URL:            http://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
 # https://github.com/mesonbuild/meson/commit/d88bf0eb80e2531a8017de4efd4eb02f1e3081ec
 Patch0001:      0001-compilers-n_debug-if-release-and-buildtype-plain-sho.patch
-# https://github.com/mesonbuild/meson/pull/5095
-# https://github.com/mesonbuild/meson/issues/5046
-# needed for the next patch to apply cleanly, fixes a bug anyway
-Patch0002:      0002-Fix-5046.patch
-# https://github.com/mesonbuild/meson/pull/5144 , but the real reason
-# for this revert in Fedora is this execstack problem:
-# https://github.com/mesonbuild/meson/issues/5268
-# https://bugzilla.redhat.com/show_bug.cgi?id=1699099
-Patch0003:      0003-Revert-gnome.compile_resources-Add-ld-binary-method.patch
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-setuptools
+Requires:       python%{python3_version}dist(setuptools)
 %if %{with check}
 BuildRequires:  ninja-build
 # Various languages
@@ -112,6 +103,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Wed Apr 17 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.1-1
+- Update to 0.50.1
+
 * Mon Apr 15 2019 Adam Williamson <awilliam@redhat.com> - 0.50.0-4
 - Backport patch to revert ld binary method change (#1699099)
 
