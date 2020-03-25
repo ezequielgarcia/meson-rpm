@@ -91,6 +91,7 @@ sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
 %install
 %py3_install
+install -d %{buildroot}%{rpmmacrodir}
 install -Dpm0644 -t %{buildroot}%{rpmmacrodir} data/macros.%{name}
 
 %if %{with check}
@@ -145,7 +146,7 @@ export MESON_PRINT_TEST_OUTPUT=1
 * Wed Jul 10 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.51.1-1
 - Update to 0.51.1
 
-* Mon Jun 17 10:03:21 CEST 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.51.0-1
+* Mon Jun 17 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.51.0-1
 - Update to 0.51
 
 * Wed Apr 17 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.50.1-1
