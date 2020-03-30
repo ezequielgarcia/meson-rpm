@@ -5,17 +5,14 @@
 # — ekulik
 %bcond_with check
 
-%global commit 88e40c7081b9bf8a337022ad2f12efe485fa8021
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-
 Name:           meson
-Version:        0.53.2
-Release:        1.git%{shortcommit}%{?dist}
+Version:        0.54.0
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
-Source:         https://github.com/mesonbuild/meson/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source:         https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 Obsoletes:      %{name}-gui < 0.31.0-3
@@ -82,7 +79,7 @@ support for modern software development tools and practices, such as
 unit tests, coverage reports, Valgrind, CCache and the like.
 
 %prep
-%autosetup -p1 -n %{name}-%{commit}
+%autosetup -p1
 # Macro should not change when we are redefining bindir
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
@@ -115,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Mon Mar 30 2020 - Ernestas Kulik <ekulik@redhat.com> - 0.54.0-1
+- Update to 0.54.0
+
 * Sat Mar 14 2020 - Ernestas Kulik <ekulik@redhat.com> - 0.53.2-1.git88e40c7
 - Update to snapshot of 0.53.2 with D fixes
 
