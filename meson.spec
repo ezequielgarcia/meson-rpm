@@ -1,29 +1,24 @@
 %global libname mesonbuild
 
+
 Name:           meson
-Version:        0.47.2
-Release:        2%{?dist}
+Version:        0.55.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
-URL:            http://mesonbuild.com/
-Source0:        https://github.com/mesonbuild/meson/archive/%{version}/%{name}-%{version}.tar.gz
-Patch0001:      0001-rpm-use-good-old-optflags.patch
-Patch0002:      0002-rpm-pass-auto-features-enabled-skip-ci.patch
+URL:            https://mesonbuild.com/
+Source:         https://github.com/mesonbuild/meson/releases/download/%{version}/meson-%{version}.tar.gz
+# Non-upstreamable
+Patch0001:      0001-macros-Do-not-use-shrink.patch
+# https://github.com/mesonbuild/meson/pull/7669
+Patch0002:      0001-mcompile-use-v-instead-of-verbose-for-ninja.patch
 
 BuildArch:      noarch
-Obsoletes:      %{name}-gui < 0.31.0-3
 
-# this needs Python 3.5+
-%if %{python3_pkgversion} < %{python3_other_pkgversion}
-%global __python3 %__python3_other
-%global python3_pkgversion %python3_other_pkgversion
-%endif
-
-BuildRequires:  python%{python3_pkgversion}-devel
-BuildRequires:  python%{python3_pkgversion}-setuptools
-BuildRequires:  python3-rpm-macros
-BuildRequires:  ninja-build
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+Requires:       python%{python3_version}dist(setuptools)
 Requires:       ninja-build
 
 %description
@@ -34,7 +29,6 @@ unit tests, coverage reports, Valgrind, CCache and the like.
 
 %prep
 %autosetup -p1
-find -type f -name '*.py' -executable -exec sed -i -e '1s|.*|#!%{__python3}|' {} ';'
 # Macro should not change when we are redefining bindir
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
@@ -43,28 +37,24 @@ sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
 %install
 %py3_install
-install -Dpm0644 data/macros.%{name} %{buildroot}%{rpmmacrodir}/macros.%{name}
+mkdir -p %{buildroot}%{rpmmacrodir}
+install -Dpm0644 -t %{buildroot}%{rpmmacrodir} data/macros.%{name}
 
 %files
 %license COPYING
 %{_bindir}/%{name}
-%{_bindir}/%{name}conf
-%{_bindir}/%{name}introspect
-%{_bindir}/%{name}test
-%{_bindir}/wraptool
 %{python3_sitelib}/%{libname}/
 %{python3_sitelib}/%{name}-*.egg-info/
 %{_mandir}/man1/%{name}.1*
-%{_mandir}/man1/%{name}conf.1*
-%{_mandir}/man1/%{name}introspect.1*
-%{_mandir}/man1/%{name}test.1*
-%{_mandir}/man1/wraptool.1*
 %{rpmmacrodir}/macros.%{name}
 %dir %{_datadir}/polkit-1
 %dir %{_datadir}/polkit-1/actions
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Sun Aug 30 2020 Igor Raits <ignatenkobrain@fedoraproject.org> - 0.55.1-1
+- Update to 0.55.1
+
 * Thu Mar 07 2019 Troy Dawson <tdawson@redhat.com> - 0.47.2-2
 - Rebuilt to change main python from 3.4 to 3.6
 
