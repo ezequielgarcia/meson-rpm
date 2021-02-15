@@ -6,14 +6,13 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.56.2
-Release:        2%{?dist}
+Version:        0.57.0
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-Patch0:         %{name}-gcc11.patch
 
 BuildArch:      noarch
 
@@ -113,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Mon Feb 15 2021 Paolo Bonzini <pbonzini@redhat.com> - 0.57.0-1
+- Update to 0.57.0
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.56.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
