@@ -13,7 +13,6 @@ Summary:        High productivity build system
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-Patch0001:      https://github.com/mesonbuild/meson/commit/756ea32e068e60ece210561edc2dee523826f472.patch#/0001-Don-t-access-other-enum-members-from-self.patch
 
 BuildArch:      noarch
 
