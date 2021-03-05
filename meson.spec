@@ -6,8 +6,8 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.56.2
-Release:        2%{?dist}
+Version:        0.57.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -115,6 +115,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Fri Mar 05 2021 Igor Raits <ignatenkobrain@fedoraproject.org> - 0.57.1-1
+- Update to 0.57.1
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.56.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
