@@ -20,6 +20,11 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 Requires:       python%{python3_version}dist(setuptools)
 Requires:       ninja-build
+%if 0%{?rhel}
+# rpm macro %%meson is using %%set_build_flags, which is missing on RHEL
+# macro is on RHEL provided by the epel-rpm-macros package
+Requires:  epel-rpm-macros
+%endif
 
 %if %{with check}
 BuildRequires:  ninja-build
