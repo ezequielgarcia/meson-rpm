@@ -7,7 +7,7 @@
 
 Name:           meson
 Version:        0.57.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -117,6 +117,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Tue Apr 20 2021 Michal Ambroz <rebus at_ seznam.cz> - 0.57.2-2
+- Add explicit dependency to epel-rpm-macros on rhel
+
 * Sun Apr 11 2021 Kalev Lember <klember@redhat.com> - 0.57.2-1
 - Update to 0.57.2
 
