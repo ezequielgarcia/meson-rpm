@@ -6,7 +6,7 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.57.2
+Version:        0.58.0
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -112,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Wed May 05 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.58.0-1
+- new version
+
 * Sun Apr 11 2021 Kalev Lember <klember@redhat.com> - 0.57.2-1
 - Update to 0.57.2
 
