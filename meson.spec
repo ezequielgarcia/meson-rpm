@@ -7,12 +7,16 @@
 
 Name:           meson
 Version:        0.58.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
+
+# Backported from upstream
+# https://github.com/mesonbuild/meson/pull/8757
+Patch0:         8757.patch
 
 BuildArch:      noarch
 
@@ -112,6 +116,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Thu May 20 2021 Kalev Lember <klember@redhat.com> - 0.58.0-2
+- Backport upstream patch to fix gtkdoc generation
+
 * Wed May 05 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.58.0-1
 - new version
 
