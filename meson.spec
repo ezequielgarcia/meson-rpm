@@ -7,7 +7,7 @@
 
 Name:           meson
 Version:        0.58.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -119,6 +119,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Thu Jun 03 2021 Python Maint <python-maint@redhat.com> - 0.58.0-4
+- Rebuilt for Python 3.10
+
 * Tue May 25 2021 Ondrej Holy <oholy@redhat.com> - 0.58.0-3
 - Backport upstream patch to fix environment variable regression
 
