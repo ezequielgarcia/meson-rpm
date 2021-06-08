@@ -6,20 +6,13 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.58.0
-Release:        5%{?dist}
+Version:        0.58.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-
-# Backported from upstream
-# https://github.com/mesonbuild/meson/pull/8757
-Patch0:         8757.patch
-
-# https://github.com/mesonbuild/meson/pull/8761
-Patch1:         8761.patch
 
 BuildArch:      noarch
 
@@ -119,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Tue Jul 22 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.58.1-1
+- Update to 0.58.1
+
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.58.0-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
