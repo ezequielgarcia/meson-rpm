@@ -6,20 +6,13 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.58.0
-Release:        4%{?dist}
+Version:        0.58.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-
-# Backported from upstream
-# https://github.com/mesonbuild/meson/pull/8757
-Patch0:         8757.patch
-
-# https://github.com/mesonbuild/meson/pull/8761
-Patch1:         8761.patch
 
 BuildArch:      noarch
 
@@ -119,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Tue Jun 08 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.58.1-1
+- Update to 0.58.1
+
 * Thu Jun 03 2021 Python Maint <python-maint@redhat.com> - 0.58.0-4
 - Rebuilt for Python 3.10
 
