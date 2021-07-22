@@ -7,7 +7,7 @@
 
 Name:           meson
 Version:        0.58.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
@@ -119,6 +119,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.58.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Thu Jun 03 2021 Python Maint <python-maint@redhat.com> - 0.58.0-4
 - Rebuilt for Python 3.10
 
