@@ -115,9 +115,6 @@ export MESON_PRINT_TEST_OUTPUT=1
 * Fri Jul 23 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.59.0-1
 - new version
 
-* Tue Jun 22 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.58.1-1
-- Update to 0.58.1
-
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.58.0-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
