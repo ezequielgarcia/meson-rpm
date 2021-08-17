@@ -7,12 +7,16 @@
 
 Name:           meson
 Version:        0.59.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
+# interperter: Fix list contains for Holders (fixes bolt test suite)
+# https://github.com/mesonbuild/meson/pull/9027
+# https://bugzilla.redhat.com/show_bug.cgi?id=1994006
+Patch0:         0001-interpreter-Fix-list-contains-for-Holders-fixes-9020.patch
 
 BuildArch:      noarch
 
@@ -112,6 +116,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Tue Aug 17 2021 Adam Williamson <awilliam@redhat.com> - 0.59.0-2
+- Backport PR #9027 to fix a bug that broke some test suites (#1994006)
+
 * Fri Jul 23 2021 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.59.0-1
 - new version
 
