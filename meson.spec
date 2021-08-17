@@ -22,6 +22,8 @@ BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+# For patching with git, needed for PR #9027 patch
+BuildRequires:  git
 Requires:       python%{python3_version}dist(setuptools)
 Requires:       ninja-build
 
@@ -83,7 +85,7 @@ support for modern software development tools and practices, such as
 unit tests, coverage reports, Valgrind, CCache and the like.
 
 %prep
-%autosetup -p1 -n meson-%{version_no_tilde %{quote:}}
+%autosetup -S git -p1 -n meson-%{version_no_tilde %{quote:}}
 # Macro should not change when we are redefining bindir
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
