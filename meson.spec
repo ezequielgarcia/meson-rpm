@@ -6,24 +6,18 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.59.0
-Release:        2%{?dist}
+Version:        0.59.1
+Release:        1%{?dist}
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-# interperter: Fix list contains for Holders (fixes bolt test suite)
-# https://github.com/mesonbuild/meson/pull/9027
-# https://bugzilla.redhat.com/show_bug.cgi?id=1994006
-Patch0:         0001-interpreter-Fix-list-contains-for-Holders-fixes-9020.patch
 
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-# For patching with git, needed for PR #9027 patch
-BuildRequires:  git
 Requires:       python%{python3_version}dist(setuptools)
 Requires:       ninja-build
 
@@ -85,7 +79,7 @@ support for modern software development tools and practices, such as
 unit tests, coverage reports, Valgrind, CCache and the like.
 
 %prep
-%autosetup -S git -p1 -n meson-%{version_no_tilde %{quote:}}
+%autosetup -p1 -n meson-%{version_no_tilde %{quote:}}
 # Macro should not change when we are redefining bindir
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
@@ -118,6 +112,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
 
 %changelog
+* Sat Aug 21 2021 Kalev Lember <klember@redhat.com> - 0.59.1-1
+- Update to 0.59.1
+
 * Tue Aug 17 2021 Adam Williamson <awilliam@redhat.com> - 0.59.0-2
 - Backport PR #9027 to fix a bug that broke some test suites (#1994006)
 
