@@ -89,6 +89,8 @@ sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 %install
 %py3_install
 install -Dpm0644 -t %{buildroot}%{rpmmacrodir} data/macros.%{name}
+install -Dpm0644 -t %{buildroot}%{_datadir}/bash-completion/completions/ data/shell-completions/bash/meson
+install -Dpm0644 -t %{buildroot}%{_datadir}/zsh/site-functions/ data/shell-completions/zsh/_meson
 
 %if %{with check}
 %check
@@ -110,10 +112,13 @@ export MESON_PRINT_TEST_OUTPUT=1
 %dir %{_datadir}/polkit-1
 %dir %{_datadir}/polkit-1/actions
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
+%{_datadir}/bash-completion/completions/meson
+%{_datadir}/zsh/site-functions/_meson
 
 %changelog
 * Tue Mar 15 2022 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.61.3-1
 - Update to 0.61.3
+- Install zsh & bash completion
 
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 0.60.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
