@@ -6,7 +6,7 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.61.3
+Version:        0.62.1
 Release:        1%{?dist}
 Summary:        High productivity build system
 
@@ -116,6 +116,9 @@ export MESON_PRINT_TEST_OUTPUT=1
 %{_datadir}/zsh/site-functions/_meson
 
 %changelog
+* Tue Apr 26 2022 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.62.1-1
+- Update to 0.62.1
+
 * Tue Mar 15 2022 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.61.3-1
 - Update to 0.61.3
 - Install zsh & bash completion
