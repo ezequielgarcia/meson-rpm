@@ -6,7 +6,7 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.59.4
+Version:        0.62.1
 Release:        %autorelease
 Summary:        High productivity build system
 
@@ -89,6 +89,8 @@ sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 %install
 %py3_install
 install -Dpm0644 -t %{buildroot}%{rpmmacrodir} data/macros.%{name}
+install -Dpm0644 -t %{buildroot}%{_datadir}/bash-completion/completions/ data/shell-completions/bash/meson
+install -Dpm0644 -t %{buildroot}%{_datadir}/zsh/site-functions/ data/shell-completions/zsh/_meson
 
 %if %{with check}
 %check
@@ -110,6 +112,8 @@ export MESON_PRINT_TEST_OUTPUT=1
 %dir %{_datadir}/polkit-1
 %dir %{_datadir}/polkit-1/actions
 %{_datadir}/polkit-1/actions/com.mesonbuild.install.policy
+%{_datadir}/bash-completion/completions/meson
+%{_datadir}/zsh/site-functions/_meson
 
 %changelog
 %autochangelog
