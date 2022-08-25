@@ -1,0 +1,241 @@
+From 27748f9cd16908f7806328cc0ffb6ba34f04588e Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Mon, 15 Aug 2022 23:57:50 -0400
+Subject: [PATCH] fix linker regression for compilers that don't accept LDFLAGS
+ directly
+
+e.g. ldc -- the compiler needs to process args before consuming them.
+
+Fixes #10693
+---
+ mesonbuild/compilers/compilers.py       |  6 +++++-
+ mesonbuild/compilers/d.py               | 21 +++++++++++++--------
+ mesonbuild/compilers/mixins/ccrx.py     |  4 +++-
+ mesonbuild/compilers/mixins/compcert.py |  5 ++++-
+ mesonbuild/compilers/mixins/ti.py       |  4 +++-
+ mesonbuild/compilers/mixins/xc16.py     |  4 +++-
+ mesonbuild/linkers/detect.py            |  4 +++-
+ 7 files changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/mesonbuild/compilers/compilers.py b/mesonbuild/compilers/compilers.py
+index 5aab9c1da..fab9fc17c 100644
+--- a/mesonbuild/compilers/compilers.py
++++ b/mesonbuild/compilers/compilers.py
+@@ -692,10 +692,14 @@ class Compiler(HoldableObject, metaclass=abc.ABCMeta):
+         """
+         raise EnvironmentException('Language %s does not support function checks.' % self.get_display_language())
+
+-    def unix_args_to_native(self, args: T.List[str]) -> T.List[str]:
++    @classmethod
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo') -> T.List[str]:
+         "Always returns a copy that can be independently mutated"
+         return args.copy()
+
++    def unix_args_to_native(self, args: T.List[str]) -> T.List[str]:
++        return self._unix_args_to_native(args, self.info)
++
+     @classmethod
+     def native_args_to_unix(cls, args: T.List[str]) -> T.List[str]:
+         "Always returns a copy that can be independently mutated"
+diff --git a/mesonbuild/compilers/d.py b/mesonbuild/compilers/d.py
+index f4fd0cd40..54f0d9a0c 100644
+--- a/mesonbuild/compilers/d.py
++++ b/mesonbuild/compilers/d.py
+@@ -283,7 +283,8 @@ class DmdLikeCompilerMixin(CompilerMixinBase):
+         return super().build_rpath_args(
+             env, build_dir, from_dir, rpath_paths, build_rpath, install_rpath)
+
+-    def _translate_args_to_nongnu(self, args: T.List[str]) -> T.List[str]:
++    @classmethod
++    def _translate_args_to_nongnu(cls, args: T.List[str], info: 'MachineInfo', link_id: str) -> T.List[str]:
+         # Translate common arguments to flags the LDC/DMD compilers
+         # can understand.
+         # The flags might have been added by pkg-config files,
+@@ -298,10 +299,10 @@ class DmdLikeCompilerMixin(CompilerMixinBase):
+         for arg in args:
+             # Translate OS specific arguments first.
+             osargs = []  # type: T.List[str]
+-            if self.info.is_windows():
+-                osargs = self.translate_arg_to_windows(arg)
+-            elif self.info.is_darwin():
+-                osargs = self._translate_arg_to_osx(arg)
++            if info.is_windows():
++                osargs = cls.translate_arg_to_windows(arg)
++            elif info.is_darwin():
++                osargs = cls._translate_arg_to_osx(arg)
+             if osargs:
+                 dcargs.extend(osargs)
+                 continue
+@@ -386,7 +387,7 @@ class DmdLikeCompilerMixin(CompilerMixinBase):
+                     continue
+
+                 # linker flag such as -L=/DEBUG must pass through
+-                if self.linker.id == 'link' and self.info.is_windows() and suffix.startswith('/'):
++                if info.is_windows() and link_id == 'link' and suffix.startswith('/'):
+                     dcargs.append(arg)
+                     continue
+
+@@ -440,6 +441,10 @@ class DmdLikeCompilerMixin(CompilerMixinBase):
+             args.append('-L=' + arg)
+         return args
+
++    @classmethod
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo', link_id: str = '') -> T.List[str]:
++        return cls._translate_args_to_nongnu(args, info, link_id)
++
+     def get_debug_args(self, is_debug: bool) -> T.List[str]:
+         ddebug_args = []
+         if is_debug:
+@@ -899,7 +904,7 @@ class LLVMDCompiler(DmdLikeCompilerMixin, DCompiler):
+         return self._get_crt_args(crt_val, buildtype)
+
+     def unix_args_to_native(self, args: T.List[str]) -> T.List[str]:
+-        return self._translate_args_to_nongnu(args)
++        return self._unix_args_to_native(args, self.info, self.linker.id)
+
+     def get_optimization_args(self, optimization_level: str) -> T.List[str]:
+         return ldc_optimization_args[optimization_level]
+@@ -988,7 +993,7 @@ class DmdDCompiler(DmdLikeCompilerMixin, DCompiler):
+         return self._get_crt_args(crt_val, buildtype)
+
+     def unix_args_to_native(self, args: T.List[str]) -> T.List[str]:
+-        return self._translate_args_to_nongnu(args)
++        return self._unix_args_to_native(args, self.info, self.linker.id)
+
+     def get_optimization_args(self, optimization_level: str) -> T.List[str]:
+         return dmd_optimization_args[optimization_level]
+diff --git a/mesonbuild/compilers/mixins/ccrx.py b/mesonbuild/compilers/mixins/ccrx.py
+index d87769eb3..f4c5e06c2 100644
+--- a/mesonbuild/compilers/mixins/ccrx.py
++++ b/mesonbuild/compilers/mixins/ccrx.py
+@@ -11,6 +11,7 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
++from __future__ import annotations
+
+ """Representations specific to the Renesas CC-RX compiler family."""
+
+@@ -20,6 +21,7 @@ import typing as T
+ from ...mesonlib import EnvironmentException
+
+ if T.TYPE_CHECKING:
++    from ...envconfig import MachineInfo
+     from ...environment import Environment
+     from ...compilers.compilers import Compiler
+ else:
+@@ -105,7 +107,7 @@ class CcrxCompiler(Compiler):
+         return ccrx_debug_args[is_debug]
+
+     @classmethod
+-    def unix_args_to_native(cls, args: T.List[str]) -> T.List[str]:
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo') -> T.List[str]:
+         result = []
+         for i in args:
+             if i.startswith('-D'):
+diff --git a/mesonbuild/compilers/mixins/compcert.py b/mesonbuild/compilers/mixins/compcert.py
+index 5e2ba0de5..f1de8f16c 100644
+--- a/mesonbuild/compilers/mixins/compcert.py
++++ b/mesonbuild/compilers/mixins/compcert.py
+@@ -11,6 +11,7 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
++from __future__ import annotations
+
+ """Representations specific to the CompCert C compiler family."""
+
+@@ -19,6 +20,7 @@ import re
+ import typing as T
+
+ if T.TYPE_CHECKING:
++    from envconfig import MachineInfo
+     from ...environment import Environment
+     from ...compilers.compilers import Compiler
+ else:
+@@ -87,7 +89,8 @@ class CompCertCompiler(Compiler):
+     def get_pch_use_args(self, pch_dir: str, header: str) -> T.List[str]:
+         return []
+
+-    def unix_args_to_native(self, args: T.List[str]) -> T.List[str]:
++    @classmethod
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo') -> T.List[str]:
+         "Always returns a copy that can be independently mutated"
+         patched_args = []  # type: T.List[str]
+         for arg in args:
+diff --git a/mesonbuild/compilers/mixins/ti.py b/mesonbuild/compilers/mixins/ti.py
+index cbad3004f..a98e6d07e 100644
+--- a/mesonbuild/compilers/mixins/ti.py
++++ b/mesonbuild/compilers/mixins/ti.py
+@@ -11,6 +11,7 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
++from __future__ import annotations
+
+ """Representations specific to the Texas Instruments compiler family."""
+
+@@ -20,6 +21,7 @@ import typing as T
+ from ...mesonlib import EnvironmentException
+
+ if T.TYPE_CHECKING:
++    from ...envconfig import MachineInfo
+     from ...environment import Environment
+     from ...compilers.compilers import Compiler
+ else:
+@@ -120,7 +122,7 @@ class TICompiler(Compiler):
+         return ['-I=' + path]
+
+     @classmethod
+-    def unix_args_to_native(cls, args: T.List[str]) -> T.List[str]:
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo') -> T.List[str]:
+         result = []
+         for i in args:
+             if i.startswith('-D'):
+diff --git a/mesonbuild/compilers/mixins/xc16.py b/mesonbuild/compilers/mixins/xc16.py
+index 243356105..db7a33737 100644
+--- a/mesonbuild/compilers/mixins/xc16.py
++++ b/mesonbuild/compilers/mixins/xc16.py
+@@ -11,6 +11,7 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
++from __future__ import annotations
+
+ """Representations specific to the Microchip XC16 C compiler family."""
+
+@@ -20,6 +21,7 @@ import typing as T
+ from ...mesonlib import EnvironmentException
+
+ if T.TYPE_CHECKING:
++    from ...envconfig import MachineInfo
+     from ...environment import Environment
+     from ...compilers.compilers import Compiler
+ else:
+@@ -104,7 +106,7 @@ class Xc16Compiler(Compiler):
+         return xc16_debug_args[is_debug]
+
+     @classmethod
+-    def unix_args_to_native(cls, args: T.List[str]) -> T.List[str]:
++    def _unix_args_to_native(cls, args: T.List[str], info: 'MachineInfo') -> T.List[str]:
+         result = []
+         for i in args:
+             if i.startswith('-D'):
+diff --git a/mesonbuild/linkers/detect.py b/mesonbuild/linkers/detect.py
+index 684328b4c..9080444d4 100644
+--- a/mesonbuild/linkers/detect.py
++++ b/mesonbuild/linkers/detect.py
+@@ -140,7 +140,9 @@ def guess_nix_linker(env: 'Environment', compiler: T.List[str], comp_class: T.Ty
+     """
+     env.coredata.add_lang_args(comp_class.language, comp_class, for_machine, env)
+     extra_args = extra_args or []
+-    extra_args += env.coredata.get_external_link_args(for_machine, comp_class.language)
++
++    ldflags = env.coredata.get_external_link_args(for_machine, comp_class.language)
++    extra_args += comp_class._unix_args_to_native(ldflags, env.machines[for_machine])
+
+     if isinstance(comp_class.LINKER_PREFIX, str):
+         check_args = [comp_class.LINKER_PREFIX + '--version'] + extra_args
+--
+2.37.2
+
