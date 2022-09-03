@@ -6,19 +6,13 @@
 %bcond_with check
 
 Name:           meson
-Version:        0.63.1
+Version:        0.63.2
 Release:        %autorelease
 Summary:        High productivity build system
 
 License:        ASL 2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-# Fix D builds broken due to LDFLAGS being set.
-# https://github.com/mesonbuild/meson/issues/10693
-# Upstream commit is further modified by wrapping type hints like this:
-# MachineType -> 'MachineType'.
-# This is needed, because commit 0703ee0a is missing and does not apply cleanly.
-Patch0:         0001-fix-linker-regression-for-compilers-that-don-t-accep.patch
 
 BuildArch:      noarch
 
