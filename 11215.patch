@@ -1,0 +1,242 @@
+From 9aff189e315ccbe3444c75aef412d311fa95fcd2 Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Sun, 25 Dec 2022 02:19:14 -0500
+Subject: [PATCH 1/5] add a hidden environment variable to make Meson complain
+ hard on deprecations
+
+Useful for running the testsuite with this environment variable and
+catching obscure issues. Just like with the encoding warning later down,
+we have to do this inside meson itself, not externally injected.
+---
+ mesonbuild/mesonmain.py | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/mesonbuild/mesonmain.py b/mesonbuild/mesonmain.py
+index ca38f29b615..369b411c0b0 100644
+--- a/mesonbuild/mesonmain.py
++++ b/mesonbuild/mesonmain.py
+@@ -235,6 +235,13 @@ def set_meson_command(mainfile):
+     mesonlib.set_meson_command(mainfile)
+ 
+ def run(original_args, mainfile):
++    if os.environ.get('MESON_SHOW_DEPRECATIONS'):
++        # workaround for https://bugs.python.org/issue34624
++        import warnings
++        for typ in [DeprecationWarning, SyntaxWarning, FutureWarning, PendingDeprecationWarning]:
++            warnings.filterwarnings('error', category=typ, module='mesonbuild')
++        warnings.filterwarnings('ignore', message=".*importlib-resources.*")
++
+     if sys.version_info >= (3, 10) and os.environ.get('MESON_RUNNING_IN_PROJECT_TESTS'):
+         # workaround for https://bugs.python.org/issue34624
+         import warnings
+
+From 56312c057938237671524f49c5206e2a98be7863 Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Sun, 1 Jan 2023 17:37:01 -0500
+Subject: [PATCH 2/5] mtest: delay creation of asyncio lock until event loop
+ exists
+
+In https://bugs.python.org/issue42392 this stopped implicitly creating
+an event loop if none exists. We created it before running _run_tests(),
+so it would auto-create an event loop and set the default, which means
+we cannot create one explicitly on our own schedule or we end up with
+two of them.
+
+Delay this until we actually start the logger. This happens inside the
+actual testsuite loop, so it finds the running loop and doesn't create a
+new one, even on python <3.10.
+---
+ mesonbuild/mtest.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/mesonbuild/mtest.py b/mesonbuild/mtest.py
+index bcf84d360b5..b398705789d 100644
+--- a/mesonbuild/mtest.py
++++ b/mesonbuild/mtest.py
+@@ -502,7 +502,9 @@ def __init__(self) -> None:
+         self.progress_task = None          # type: T.Optional[asyncio.Future]
+         self.max_left_width = 0            # type: int
+         self.stop = False
+-        self.update = asyncio.Event()
++        # TODO: before 3.10 this cannot be created immediately, because
++        # it will create a new event loop
++        self.update: asyncio.Event
+         self.should_erase_line = ''
+         self.test_count = 0
+         self.started_tests = 0
+@@ -600,6 +602,7 @@ async def report_progress() -> None:
+                 self.emit_progress(harness)
+             self.flush()
+ 
++        self.update = asyncio.Event()
+         self.test_count = harness.test_count
+         self.cols = max(self.cols, harness.max_left_width + 30)
+ 
+
+From ab8081fab66eafcb35021f45ffae0648b658733e Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Sun, 25 Dec 2022 01:45:01 -0500
+Subject: [PATCH 3/5] mtest: clean up asyncio event loop instantiation
+
+Fix a TODO comment about moving to asyncio.run, now that we use
+sufficiently new python to do it.
+
+Note that we create an event loop for Windows using the new python
+defaults, but in a completely different part of the code from where we
+need to use it. Since asyncio.run creates the loop on its own, we need
+to set the default policy instead -- which we probably should have done
+all along.
+---
+ mesonbuild/mtest.py | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/mesonbuild/mtest.py b/mesonbuild/mtest.py
+index b398705789d..5c584e05e44 100644
+--- a/mesonbuild/mtest.py
++++ b/mesonbuild/mtest.py
+@@ -1925,9 +1925,12 @@ def get_pretty_suite(self, test: TestSerialisation) -> str:
+     def run_tests(self, runners: T.List[SingleTestRunner]) -> None:
+         try:
+             self.open_logfiles()
+-            # Replace with asyncio.run once we can require Python 3.7
+-            loop = asyncio.get_event_loop()
+-            loop.run_until_complete(self._run_tests(runners))
++
++            # TODO: this is the default for python 3.8
++            if sys.platform == 'win32':
++                asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
++
++            asyncio.run(self._run_tests(runners))
+         finally:
+             self.close_logfiles()
+ 
+@@ -2090,10 +2093,6 @@ def run(options: argparse.Namespace) -> int:
+     if options.wrapper:
+         check_bin = options.wrapper[0]
+ 
+-    if sys.platform == 'win32':
+-        loop = asyncio.ProactorEventLoop()
+-        asyncio.set_event_loop(loop)
+-
+     if check_bin is not None:
+         exe = ExternalProgram(check_bin, silent=True)
+         if not exe.found():
+
+From 40315e6ebb754b5584680c5193540e4638b792a3 Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Sun, 1 Jan 2023 14:33:23 -0500
+Subject: [PATCH 4/5] mtest: simplify deprecated access to current loop
+
+These functions constantly want the current asyncio loop, and we run a
+function call each time to get it. And the function call is a deprecated
+one. Python 3.7 brings the more explicit get_running_loop for use when
+we know we're inside one, with the aim of getting rid of get_event_loop
+once support for python <3.7 disappears. Meson no longer supports python
+<3.7 either.
+
+Switch to the new API, and save the reference for reuse instead of
+constantly re-calculating it.
+---
+ mesonbuild/mtest.py | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/mesonbuild/mtest.py b/mesonbuild/mtest.py
+index 5c584e05e44..4f60a3d32f4 100644
+--- a/mesonbuild/mtest.py
++++ b/mesonbuild/mtest.py
+@@ -574,7 +574,7 @@ def emit_progress(self, harness: 'TestHarness') -> None:
+ 
+     def start(self, harness: 'TestHarness') -> None:
+         async def report_progress() -> None:
+-            loop = asyncio.get_event_loop()
++            loop = asyncio.get_running_loop()
+             next_update = 0.0
+             self.request_update()
+             while not self.stop:
+@@ -1232,13 +1232,14 @@ def check_futures(futures: T.Iterable[asyncio.Future]) -> None:
+ 
+     # Python is silly and does not have a variant of asyncio.wait with an
+     # absolute time as deadline.
+-    deadline = None if timeout is None else asyncio.get_event_loop().time() + timeout
++    loop = asyncio.get_running_loop()
++    deadline = None if timeout is None else loop.time() + timeout
+     while futures and (timeout is None or timeout > 0):
+         done, futures = await asyncio.wait(futures, timeout=timeout,
+                                            return_when=asyncio.FIRST_EXCEPTION)
+         check_futures(done)
+         if deadline:
+-            timeout = deadline - asyncio.get_event_loop().time()
++            timeout = deadline - loop.time()
+ 
+     check_futures(futures)
+ 
+@@ -1948,6 +1949,7 @@ async def _run_tests(self, runners: T.List[SingleTestRunner]) -> None:
+         running_tests = {}  # type: T.Dict[asyncio.Future, str]
+         interrupted = False
+         ctrlc_times = deque(maxlen=MAX_CTRLC)  # type: T.Deque[float]
++        loop = asyncio.get_running_loop()
+ 
+         async def run_test(test: SingleTestRunner) -> None:
+             async with semaphore:
+@@ -1996,7 +1998,7 @@ def sigint_handler() -> None:
+             nonlocal interrupted
+             if interrupted:
+                 return
+-            ctrlc_times.append(asyncio.get_event_loop().time())
++            ctrlc_times.append(loop.time())
+             if len(ctrlc_times) == MAX_CTRLC and ctrlc_times[-1] - ctrlc_times[0] < 1:
+                 self.flush_logfiles()
+                 mlog.warning('CTRL-C detected, exiting')
+@@ -2013,10 +2015,10 @@ def sigint_handler() -> None:
+ 
+         if sys.platform != 'win32':
+             if os.getpgid(0) == os.getpid():
+-                asyncio.get_event_loop().add_signal_handler(signal.SIGINT, sigint_handler)
++                loop.add_signal_handler(signal.SIGINT, sigint_handler)
+             else:
+-                asyncio.get_event_loop().add_signal_handler(signal.SIGINT, sigterm_handler)
+-            asyncio.get_event_loop().add_signal_handler(signal.SIGTERM, sigterm_handler)
++                loop.add_signal_handler(signal.SIGINT, sigterm_handler)
++            loop.add_signal_handler(signal.SIGTERM, sigterm_handler)
+         try:
+             for runner in runners:
+                 if not runner.is_parallel:
+@@ -2033,8 +2035,8 @@ def sigint_handler() -> None:
+             await complete_all(futures)
+         finally:
+             if sys.platform != 'win32':
+-                asyncio.get_event_loop().remove_signal_handler(signal.SIGINT)
+-                asyncio.get_event_loop().remove_signal_handler(signal.SIGTERM)
++                loop.remove_signal_handler(signal.SIGINT)
++                loop.remove_signal_handler(signal.SIGTERM)
+             for l in self.loggers:
+                 await l.finish(self)
+ 
+
+From c5e766af75369009ab9de82baf6c7c7e18f66857 Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz@archlinux.org>
+Date: Sun, 25 Dec 2022 02:04:49 -0500
+Subject: [PATCH 5/5] be more explicit about asyncio usage
+
+`get_event_loop()` would always implicitly create one on demand, but
+Python upstream has decided it's a bad/confusing API. Explicitly
+starting our own, then setting it, is exactly equivalent other than not
+being scheduled for deprecation.
+---
+ mesonbuild/msubprojects.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mesonbuild/msubprojects.py b/mesonbuild/msubprojects.py
+index d6c182a01e2..1be85435e87 100755
+--- a/mesonbuild/msubprojects.py
++++ b/mesonbuild/msubprojects.py
+@@ -699,7 +699,8 @@ def run(options: 'Arguments') -> int:
+             raise MesonException(f'Unknown subproject type {t!r}, supported types are: {ALL_TYPES_STRING}')
+     tasks: T.List[T.Awaitable[bool]] = []
+     task_names: T.List[str] = []
+-    loop = asyncio.get_event_loop()
++    loop = asyncio.new_event_loop()
++    asyncio.set_event_loop(loop)
+     executor = ThreadPoolExecutor(options.num_processes)
+     if types:
+         wraps = [wrap for wrap in wraps if wrap.type in types]
