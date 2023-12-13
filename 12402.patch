@@ -1,10 +1,9 @@
-From 2e92a786f56990ec7c40e239b8160666548e9e35 Mon Sep 17 00:00:00 2001
+From ddcc8b038c325cec8e1a0517b1b16e06213419b0 Mon Sep 17 00:00:00 2001
 From: Ralf Gommers <ralf.gommers@gmail.com>
-Date: Fri, 20 Oct 2023 17:29:26 +0200
-Subject: [PATCH] Stop using removed `importlib.resources` functions on Python
- >=3.13
+Date: Wed, 13 Dec 2023 15:03:07 +0100
+Subject: [PATCH] Don't use the removed importlib.resources.path with Python
+ 3.13+
 
-Closes gh-12401
 ---
  mesonbuild/dependencies/python.py |  8 +++++++-
  mesonbuild/mesondata.py           | 11 +++++++----
@@ -12,7 +11,7 @@ Closes gh-12401
  3 files changed, 19 insertions(+), 7 deletions(-)
 
 diff --git a/mesonbuild/dependencies/python.py b/mesonbuild/dependencies/python.py
-index f044946..244cd31 100644
+index fe778af..55d9c1a 100644
 --- a/mesonbuild/dependencies/python.py
 +++ b/mesonbuild/dependencies/python.py
 @@ -15,6 +15,7 @@ from __future__ import annotations
@@ -23,7 +22,7 @@ index f044946..244cd31 100644
  import typing as T
  
  from .. import mesonlib, mlog
-@@ -110,8 +111,13 @@ class BasicPythonExternalProgram(ExternalProgram):
+@@ -112,8 +113,13 @@ class BasicPythonExternalProgram(ExternalProgram):
          # Sanity check, we expect to have something that at least quacks in tune
  
          import importlib.resources
@@ -68,19 +67,19 @@ index da641fd..0f93a67 100644
  
      def write_to_private(self, env: 'Environment') -> Path:
 diff --git a/mesonbuild/modules/python.py b/mesonbuild/modules/python.py
-index ac74e13..baeb859 100644
+index ec95374..926a09b 100644
 --- a/mesonbuild/modules/python.py
 +++ b/mesonbuild/modules/python.py
 @@ -13,7 +13,7 @@
  # limitations under the License.
  from __future__ import annotations
  
--import copy, json, os, shutil
-+import copy, json, os, shutil, sys
+-import copy, json, os, shutil, re
++import copy, json, os, shutil, re, sys
  import typing as T
  
  from . import ExtensionModule, ModuleInfo
-@@ -329,7 +329,10 @@ class PythonModule(ExtensionModule):
+@@ -407,7 +407,10 @@ class PythonModule(ExtensionModule):
          import importlib.resources
          pycompile = os.path.join(self.interpreter.environment.get_scratch_dir(), 'pycompile.py')
          with open(pycompile, 'wb') as f:
@@ -93,5 +92,5 @@ index ac74e13..baeb859 100644
          for i in self.installations.values():
              if isinstance(i, PythonExternalProgram) and i.run_bytecompile[i.info['version']]:
 -- 
-2.41.0
+2.43.0
 
