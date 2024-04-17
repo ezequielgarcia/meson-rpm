@@ -6,16 +6,13 @@
 %bcond_with check
 
 Name:           meson
-Version:        1.3.2
+Version:        1.4.0
 Release:        %autorelease
 Summary:        High productivity build system
 
 License:        Apache-2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-
-# Don't use the removed importlib.resources.path with Python 3.13+
-Patch:          https://github.com/mesonbuild/meson/pull/12402.patch
 
 BuildArch:      noarch
 
