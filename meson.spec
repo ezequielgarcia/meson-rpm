@@ -14,6 +14,9 @@ License:        Apache-2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
 
+# Upstream fix for symlinks on riscv64
+Patch:          https://github.com/mesonbuild/meson/commit/f233b7b98dc77937ba3448488fe7c66575c20aa6.patch
+
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
