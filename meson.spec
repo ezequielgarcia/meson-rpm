@@ -1,9 +1,6 @@
 %global libname mesonbuild
 
-# Don’t run the tests by default, since they are rather flaky.
-# I’ll get to getting them running eventually, but free time is sparse.
-# — ekulik
-%bcond_with check
+%bcond check 1
 
 Name:           meson
 Version:        1.4.1
@@ -102,7 +99,7 @@ rm -rf "test cases/frameworks/1 boost"
 # Remove MPI tests for now because it is complicated to run
 rm -rf "test cases/frameworks/17 mpi"
 export MESON_PRINT_TEST_OUTPUT=1
-%{__python3} ./run_tests.py
+%{python3} ./run_tests.py
 %endif
 
 %files
