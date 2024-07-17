@@ -52,7 +52,7 @@ BuildRequires:  qt5-qtbase-private-devel
 BuildRequires:  qt5-linguist
 BuildRequires:  vala
 BuildRequires:  python3-gobject-base
-BuildRequires:  wxGTK3-devel
+BuildRequires:  wxGTK-devel
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  gettext
