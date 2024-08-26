@@ -3,16 +3,13 @@
 %bcond check 1
 
 Name:           meson
-Version:        1.4.1
+Version:        1.5.1
 Release:        %autorelease
 Summary:        High productivity build system
 
 License:        Apache-2.0
 URL:            https://mesonbuild.com/
 Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
-
-# Upstream fix for symlinks on riscv64
-Patch:          https://github.com/mesonbuild/meson/commit/f233b7b98dc77937ba3448488fe7c66575c20aa6.patch
 
 BuildArch:      noarch
 
@@ -42,6 +39,8 @@ BuildRequires:  rust
 #%%endif
 # Various libs support
 BuildRequires:  boost-devel
+BuildRequires:  /usr/bin/clang-format
+BuildRequires:  clippy
 BuildRequires:  gtest-devel
 BuildRequires:  gmock-devel
 BuildRequires:  qt5-qtbase-devel
@@ -50,11 +49,13 @@ BuildRequires:  qt5-linguist
 BuildRequires:  vala
 BuildRequires:  python3-gobject-base
 BuildRequires:  wxGTK-devel
+BuildRequires:  bindgen
+BuildRequires:  binutils-gold
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  gettext
 BuildRequires:  gnustep-base-devel
-BuildRequires:  %{_bindir}/gnustep-config
+BuildRequires:  /usr/bin/gnustep-config
 BuildRequires:  git-core
 BuildRequires:  pkgconfig(protobuf)
 BuildRequires:  pkgconfig(glib-2.0)
@@ -66,7 +67,7 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  zlib-static
 BuildRequires:  python3dist(cython)
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  %{_bindir}/pcap-config
+BuildRequires:  /usr/bin/pcap-config
 BuildRequires:  pkgconfig(vulkan)
 BuildRequires:  llvm-devel
 BuildRequires:  cups-devel
@@ -94,12 +95,9 @@ install -Dpm0644 -t %{buildroot}%{_datadir}/zsh/site-functions/ data/shell-compl
 
 %if %{with check}
 %check
-# Remove Boost tests for now, because it requires Python 2
-rm -rf "test cases/frameworks/1 boost"
-# Remove MPI tests for now because it is complicated to run
-rm -rf "test cases/frameworks/17 mpi"
 export MESON_PRINT_TEST_OUTPUT=1
-%{python3} ./run_tests.py
+%{python3} ./run_unittests.py -v
+%{python3} ./run_meson_command_tests.py -v
 %endif
 
 %files
