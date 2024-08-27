@@ -27,11 +27,15 @@ BuildRequires:  gcc
 BuildRequires:  libasan
 BuildRequires:  gcc-c++
 BuildRequires:  gcc-gfortran
+%if %{undefined rhel}
 BuildRequires:  gcc-objc
 BuildRequires:  gcc-objc++
+%endif
 BuildRequires:  java-devel
 BuildRequires:  libomp-devel
+%if %{undefined rhel}
 BuildRequires:  mono-core mono-devel
+%endif
 BuildRequires:  rust
 # Since the build is noarch, we can't use %%ifarch
 #%%ifarch %%{ldc_arches}
@@ -40,26 +44,36 @@ BuildRequires:  rust
 # Various libs support
 BuildRequires:  boost-devel
 BuildRequires:  /usr/bin/clang-format
+%if %{undefined rhel}
 BuildRequires:  clippy
+%endif
 BuildRequires:  gtest-devel
 BuildRequires:  gmock-devel
+%if %{undefined rhel}
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-qtbase-private-devel
 BuildRequires:  qt5-linguist
+%endif
 BuildRequires:  vala
 BuildRequires:  python3-gobject-base
+%if %{undefined rhel}
 BuildRequires:  wxGTK-devel
 BuildRequires:  bindgen
+%endif
 BuildRequires:  binutils-gold
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  gettext
+%if %{undefined rhel}
 BuildRequires:  gnustep-base-devel
 BuildRequires:  /usr/bin/gnustep-config
+%endif
 BuildRequires:  git-core
 BuildRequires:  pkgconfig(protobuf)
 BuildRequires:  pkgconfig(glib-2.0)
+%if %{undefined rhel}
 BuildRequires:  pkgconfig(glib-sharp-2.0)
+%endif
 BuildRequires:  pkgconfig(gobject-introspection-1.0)
 BuildRequires:  gtk-doc
 BuildRequires:  itstool
