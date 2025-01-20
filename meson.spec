@@ -12,7 +12,7 @@ Summary:        High productivity build system
 
 License:        Apache-2.0
 URL:            https://mesonbuild.com/
-Source:         https://github.com/mesonbuild/meson/releases/download/%{version_no_tilde .}/meson-%{version_no_tilde %{quote:}}.tar.gz
+Source:         https://github.com/mesonbuild/meson/releases/download/%{version}/%{name}-%{version}.tar.gz
 
 # Upstream fix for symlinks on riscv64
 Patch:          https://github.com/mesonbuild/meson/commit/f233b7b98dc77937ba3448488fe7c66575c20aa6.patch
@@ -82,7 +82,7 @@ support for modern software development tools and practices, such as
 unit tests, coverage reports, Valgrind, CCache and the like.
 
 %prep
-%autosetup -p1 -n meson-%{version_no_tilde %{quote:}}
+%autosetup -p1
 # Macro should not change when we are redefining bindir
 sed -i -e "/^%%__meson /s| .*$| %{_bindir}/%{name}|" data/macros.%{name}
 
