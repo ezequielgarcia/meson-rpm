@@ -19,8 +19,8 @@ Patch:          https://github.com/mesonbuild/meson/commit/f233b7b98dc77937ba344
 
 BuildArch:      noarch
 
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+BuildRequires:  python39-devel
+BuildRequires:  python39-setuptools
 Requires:       python%{python3_version}dist(setuptools)
 Requires:       ninja-build
 
